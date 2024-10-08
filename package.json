@@ -1,5 +1,6 @@
 {
   "name": "jira-sprint-worklog-sheets",
+  "type": "module",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -15,5 +16,9 @@
     "url": "https://github.com/DamourYouKnow/jira-sprint-worklog-sheets/issues"
   },
   "homepage": "https://github.com/DamourYouKnow/jira-sprint-worklog-sheets#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "google-auth-library": "^9.14.1",
+    "google-spreadsheet": "^4.1.4"
+  }
 }
