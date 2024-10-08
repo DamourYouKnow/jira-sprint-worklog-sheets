@@ -46,9 +46,18 @@ const serviceAccountAuth = new JWT({
 
 const doc = new GoogleSpreadsheet(googleSheetId, serviceAccountAuth);
 
-updateWorklog();
-setInterval(updateWorklog, 1000 * 60 * 5);
+update();
+setInterval(update, 1000 * 60 * 5);
 
+
+async function update() {
+    try {
+        await updateWorklog();
+    }
+    catch(err) {
+        console.error(err);
+    }
+}
 
 async function updateWorklog() {
     const issues = await jiraSearch(
