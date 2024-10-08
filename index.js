@@ -131,6 +131,8 @@ async function updateWorklog() {
         rows.push({});
     }
 
+    rows.push();
+    rows.push({ 'Link': `Last Updated: ${getTimestamp()}` });
 
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
@@ -270,4 +272,17 @@ async function jiraGetActiveSprintStart() {
     start = Date.parse(start);
 
     return start;
+}
+
+
+function getTimestamp() {
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric'
+     };
+     return `${now.toLocaleDateString('en-US', options)}`
+        + ` at ${now.toLocaleTimeString('en-US')}`;
 }
