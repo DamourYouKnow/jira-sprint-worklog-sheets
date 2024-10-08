@@ -19,6 +19,6 @@ settings > security`
 - `JIRA_API_BOARD`: Jira board ID
     - Exmaple: `39`
 - `GOOGLE_CLIENT_EMAIL`: Google service account email
-    - Example: `esxample@gserviceaccount.com`
+    - Example: `example@gserviceaccount.com`
 - `GOOGLE_PRIVATE_KEY`: Google service account private key
 - `GOOGLE_SHEET_ID`: Google sheet ID
