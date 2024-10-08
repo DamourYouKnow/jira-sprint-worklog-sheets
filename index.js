@@ -72,7 +72,7 @@ async function updateWorklog() {
     for (const id in subtasks) {
         const subtask = subtasks[id];
         if (subtask.fields.parent.id in issues) {
-            issues[subtask.fields] = subtask.fields.parent;
+            issues[subtask.id] = subtask;
         }
     }
 
