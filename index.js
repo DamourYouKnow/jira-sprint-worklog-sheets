@@ -277,12 +277,17 @@ async function jiraGetActiveSprintStart() {
 
 function getTimestamp() {
     const now = new Date();
+
+    const zone = 'Canada/Eastern';
+
     const options = { 
         weekday: 'long', 
         year: 'numeric', 
         month: 'long', 
-        day: 'numeric'
+        day: 'numeric',
+        timeZone: zone
      };
+
      return `${now.toLocaleDateString('en-US', options)}`
-        + ` at ${now.toLocaleTimeString('en-US')}`;
+        + ` at ${now.toLocaleTimeString('en-US', { timeZone: zone })}`;
 }
