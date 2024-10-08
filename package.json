@@ -1,0 +1,19 @@
+{
+  "name": "jira-sprint-worklog-sheets",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DamourYouKnow/jira-sprint-worklog-sheets.git"
+  },
+  "author": "Bailey D'Amour",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DamourYouKnow/jira-sprint-worklog-sheets/issues"
+  },
+  "homepage": "https://github.com/DamourYouKnow/jira-sprint-worklog-sheets#readme",
+  "description": ""
+}
