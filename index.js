@@ -84,11 +84,11 @@ async function updateWorklog() {
         }
     }
 
-    const worklogIds = await jiraRecentWorklogs(sprintStart);
-
-    const worklogs = await jiraPost('worklog/list', {
-        'ids': worklogIds
-    });
+    const worklogs = [];
+    for (const issueId in issues) {
+        const issueWorklogs = await jiraGetWorklogs(issueId, sprintStart);
+        worklogs.push(...issueWorklogs);
+    }
 
     const members = { };
 
@@ -165,11 +165,10 @@ function totalHours(member) {
 }
 
 
-async function jiraRecentWorklogs(since) {
-    const response = await jiraGet(`worklog/updated?since=${since}`);
-
-    const worklogIds = response.values.map((value) => value.worklogId);
-    return worklogIds;
+async function jiraGetWorklogs(issue, since) {
+    const method = `issue/${issue}/worklog/?startedAfter=${since}`;
+    const response = await jiraGet(method);
+    return response.worklogs;
 }
 
 async function jiraSearch(jqlQuery, max=50) {
@@ -187,18 +186,23 @@ async function jiraSearch(jqlQuery, max=50) {
                 'parent'
             ],
             'jql': jqlQuery,
-            'startAt': page,
-            'maxResults': max
+            'maxResults': max,
+            'startAt': page
         };
 
-        response = await jiraPost('search', body);
+        const fields = body.fields.join(',');
+
+        const query = `?jql=${body.jql}&startAt=${body.startAt}`
+            + `&maxResults=${body.maxResults}&fields=${fields}`;
+
+        response = await jiraGet('search' + query, body);
 
         for (const issue of response.issues) {
             issues[issue.id] = issue;
         }
 
         recordsRead += max;
-        page += 1;
+        page += max;
     } while(recordsRead < response.total);
 
     return issues;
