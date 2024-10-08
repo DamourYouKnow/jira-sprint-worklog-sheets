@@ -5,6 +5,7 @@ const apiRoot = process.env.JIRA_API_ROOT || null;
 const jiraEmail = process.env.JIRA_API_EMAIL || null;
 const jiraToken = process.env.JIRA_API_TOKEN || null;
 const jiraProject = process.env.JIRA_API_PROJECT || null;
+const jiraBoardId = process.env.JIRA_API_BOARD || null;
 
 const googleEmail = process.env.GOOGLE_CLIENT_EMAIL || null;
 const googleKey = process.env.GOOGLE_PRIVATE_KEY || null;
@@ -24,6 +25,9 @@ if (!jiraToken) {
 }
 if (!jiraProject) {
     console.error('No JIRA_API_PROJECT environment variable set');
+}
+if (!jiraBoardId) {
+    console.error('No JIRA_API_BOARD environment variable set');
 }
 
 if (!googleEmail) {
@@ -60,6 +64,10 @@ async function update() {
 }
 
 async function updateWorklog() {
+    // Get sprint start
+    const sprintStart = await jiraGetActiveSprintStart();
+    if (sprintStart == Infinity) return;
+
     const issues = await jiraSearch(
         `sprint in openSprints() AND project = ${jiraProject}`
     );
@@ -76,7 +84,7 @@ async function updateWorklog() {
         }
     }
 
-    const worklogIds = await jiraRecentWorklogs();
+    const worklogIds = await jiraRecentWorklogs(sprintStart);
 
     const worklogs = await jiraPost('worklog/list', {
         'ids': worklogIds
@@ -157,12 +165,7 @@ function totalHours(member) {
 }
 
 
-async function jiraRecentWorklogs() {
-    // Get time 2 weeks in past.
-    let time = new Date();
-    time.setDate(time.getDate() - 14);
-    const since = Date.parse(time) / 1000;
-
+async function jiraRecentWorklogs(since) {
     const response = await jiraGet(`worklog/updated?since=${since}`);
 
     const worklogIds = response.values.map((value) => value.worklogId);
@@ -236,4 +239,31 @@ function jiraGet(method) {
             reject(err);
         });
     });
+}
+
+
+async function jiraGetActiveSprintStart() {
+    const v1Url = apiRoot.slice(0, apiRoot.length - 'api/3/'.length)
+        + `agile/1.0/board/${jiraBoardId}/sprint`;
+    
+    const response = await fetch(v1Url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Basic ${authBase64}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const data = await response.json();
+    const currentSprint = data.values.find((sprint) => {
+        return sprint.state == 'active'
+    });
+
+    if (!currentSprint) return Infinity;
+
+    let start = new Date(currentSprint.startDate);
+    start = Date.parse(start);
+
+    return start;
 }
