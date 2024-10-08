@@ -51,7 +51,7 @@ const serviceAccountAuth = new JWT({
 const doc = new GoogleSpreadsheet(googleSheetId, serviceAccountAuth);
 
 update();
-setInterval(update, 1000 * 60 * 5);
+setInterval(update, 1000 * 60 * 1);
 
 
 async function update() {
